@@ -1,0 +1,47 @@
+name: kim-staging-dry-run
+type: microsoft.app/containerapps
+location: southeastasia
+identity:
+  type: SystemAssigned
+properties:
+  environmentId: /subscriptions/62f6a6c5-b131-41c7-a6a7-ef24de3889cd/resourceGroups/kidemo/providers/Microsoft.App/managedEnvironments/sg-ca-env
+  configuration:
+    ingress:
+      external: true
+      targetPort: 3000
+    secrets:
+      - name: dona-api-key
+        value: xxx
+      - name: nextauth-secret
+        value: xxx
+    activeRevisionsMode: Single
+  template:
+    containers:
+      - name: kim-container
+        image: happyfresh.azurecr.io/ext/ki/invoice-matching:latest
+        resources:
+          cpu: 1.0
+          memory: 2Gi
+        env:
+          - name: APP_ENV
+            value: production
+          - name: DONA_HOST
+            value: https://dona-api-staging.happyfresh.io
+          - name: NEXTAUTH_URL
+            value: http://example.com
+          - name: NEXT_PUBLIC_SENTRY_DSN
+            value: https://example.com
+          - name: SENTRY_TRACES_SAMPLE_RATE
+            value: "1.0"
+          - name: DONA_API_KEY
+            secretRef: dona-api-key
+          - name: NEXTAUTH_SECRET
+            secretRef: nextauth-secret
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
