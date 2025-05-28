@@ -21,16 +21,16 @@ az account set --subscription <subscription-id>
 
 ```bash
 # Login to ACR
-az acr login --name happyfresh
+az acr login --name <acr-name>
 
 # Pull image from GitLab
-docker pull registry-gitlab.happyfresh.net/hf/tpd/rainmakers/ki-invoice-matching:latest
+docker pull gitlab/image-name:tag
 
 # Tag image for ACR
-docker tag registry-gitlab.happyfresh.net/hf/tpd/rainmakers/ki-invoice-matching:latest happyfresh.azurecr.io/ext/ki/invoice-matching:latest
+docker tag gitlab/image-name:tag image-name:tag
 
 # Push to ACR
-docker push happyfresh.azurecr.io/ext/ki/invoice-matching:latest
+docker push image-name:tag
 ```
 
 ## 4. Set environment variables
@@ -40,7 +40,7 @@ export RESOURCE_GROUP=""
 export LOCATION="southeastasia"
 export ACR_NAME=""
 export CONTAINER_APP_NAME="kim-staging"
-export IMAGE_NAME="${ACR_NAME}.azurecr.io/ext/ki/invoice-matching:latest"
+export IMAGE_NAME="${ACR_NAME}.azurecr.io/<image-name:tag>"
 export CONTAINER_APP_ENV_NAME="your-env"
 ```
 
@@ -131,6 +131,8 @@ properties:
       external: true
       targetPort: 3000
     secrets:
+      - name: db-url
+        value: xxx
       - name: dona-api-key
         value: xxx
       - name: nextauth-secret
@@ -139,7 +141,7 @@ properties:
   template:
     containers:
       - name: kim-container
-        image: happyfresh.azurecr.io/ext/ki/invoice-matching:latest
+        image: <image-name:tag>
         resources:
           cpu: 1.0
           memory: 2Gi
@@ -147,7 +149,7 @@ properties:
           - name: APP_ENV
             value: production
           - name: DONA_HOST
-            value: https://dona-api-staging.happyfresh.io
+            value: https://dona-api-staging.example.com
           - name: NEXTAUTH_URL
             value: http://example.com
           - name: NEXT_PUBLIC_SENTRY_DSN
