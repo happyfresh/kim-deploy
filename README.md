@@ -7,9 +7,9 @@
 az login
 ```
 
-Note:
-You can use azure-cli docker for easy installation
-`docker run -it -v "<LOCAL_DIR>:/mnt/current" mcr.microsoft.com/azure-cli`
+> _Note:_  
+> You can use azure-cli docker for easy installation  
+> `docker run -it -v <LOCAL_DIR>:/mnt/current" mcr.microsoft.com/azure-cli`
 
 ## 2. Set the correct subscription
 
